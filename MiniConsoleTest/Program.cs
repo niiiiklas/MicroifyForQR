@@ -20,7 +20,7 @@ namespace MiniConsoleTest
         {
             Console.WriteLine("Hello!");
 
-            var td = new TestData() { TheNameOfSubject = "Niklas Andersson", SomethingElse = "12" };
+            var td = new TestData() { TheNameOfSubject = "Niklas Andersson", SomethingElse = "12", IsWhat="dsadsadsa" };
 
             foreach(PropertyInfo pi in td.GetType().GetProperties())
             {
@@ -32,7 +32,14 @@ namespace MiniConsoleTest
             }
 
             Console.WriteLine("----------------------");
-            Console.WriteLine("" + Niklas.MicroifyForQR.MinifyForQR.CreateString<TestData>(td));
+            string str2 = "" + Niklas.MicroifyForQR.MinifyForQR.CreateString<TestData>(td);
+            Console.WriteLine(str2);
+
+
+            TestData parsed = new TestData();
+            var obj = Niklas.MicroifyForQR.MinifyForQR.Parse<TestData>(parsed, str2);
+
+            
 
             Console.ReadLine();
 
@@ -48,5 +55,8 @@ namespace MiniConsoleTest
         public string TheNameOfSubject { get; set; }
 
         public string SomethingElse { get; set; }
+
+        [IgnoreProperty]
+        public string IsWhat { get; set; }
     }
 }
