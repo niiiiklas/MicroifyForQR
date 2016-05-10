@@ -13,6 +13,8 @@ namespace Niklas.MicroifyForQR
         private const char KV_SEP = ':';
         private const char PROP_SEP = '-';
 
+        public static Type[] SupportedTypes = new Type[]{typeof(string), typeof(int), typeof(double), typeof(decimal) };
+
         public static string CreateString<T>(T obj)
         {
             string ret = "";
@@ -20,6 +22,9 @@ namespace Niklas.MicroifyForQR
             {
                 if (IsIgnored(prop))
                     continue;
+                if (!SupportedTypes.Contains(prop.PropertyType))
+                    throw new System.InvalidOperationException();
+                
                 var minifyAs = prop.GetCustomAttribute<Niklas.MicroifyForQR.MinifyAs>();
                 if (minifyAs != null)
                 {
@@ -54,8 +59,14 @@ namespace Niklas.MicroifyForQR
                     continue;
                 else
                     key = AutoMinify(prop.Name);
-
-                prop.SetValue(obj, kvs[key]);
+                if(prop.PropertyType == typeof(Int32))
+                    prop.SetValue(obj, Convert.ToInt32(kvs[key]));
+                else if(prop.PropertyType == typeof(double))
+                    prop.SetValue(obj, Convert.ToDouble(kvs[key]));
+                else if (prop.PropertyType == typeof(decimal))
+                    prop.SetValue(obj, Convert.ToDecimal(kvs[key]));
+                else if(prop.PropertyType == typeof(string))
+                    prop.SetValue(obj, kvs[key]);
             }
 
             return obj;
